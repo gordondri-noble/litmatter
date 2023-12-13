@@ -10,3 +10,6 @@ pytorch-lightning
 scipy
 numpy
 pandas
+deepchem 
+scikit-learn
+wandb

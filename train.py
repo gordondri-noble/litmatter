@@ -1,18 +1,18 @@
 import argparse
 import json
-import numpy as np
 import os
 
+import numpy as np
+from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
+                               seed_everything)
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.metrics import Accuracy
 from torch_geometric.datasets import QM9
 from torch_geometric.nn import DimeNet
 
-from pytorch_lightning.metrics import Accuracy
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
-                               seed_everything)
-
-from .lit_models.models import LitDimeNet
 from .lit_data.data import LitQM9
+from .lit_models.models import LitDimeNet
 
 
 def format_args(config):
@@ -43,13 +43,15 @@ def train_from_config(config):
 
     # set up checkpointing
     checkpoint_callback = ModelCheckpoint(monitor='val_loss', save_top_k=1)
+    wandb_logger = WandbLogger(log_model="all")
 
     trainer = Trainer(
         gpus=-1,  # number of GPUs per node
         num_nodes=num_nodes,
         accelerator='ddp',
         max_epochs=num_train_epochs,
-        callbacks=[checkpoint_callback])
+        callbacks=[checkpoint_callback],
+        logger=wandb_logger)
 
     trainer.fit(model, datamodule=datamodule)
     trainer.test()

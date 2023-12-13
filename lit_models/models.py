@@ -23,7 +23,6 @@ from torch_geometric.utils import remove_self_loops
 
 from torch_geometric.nn import DimeNet, SchNet
 
-from utils import MyTransform, Batch, Complete
 
 target = 0
 dim = 64
@@ -94,18 +93,18 @@ class LitSchNet(LightningModule):
 
         self.loss_fn = MSELoss()
 
-    def training_step(self, batch: Batch, batch_idx: int):
+    def training_step(self, batch, batch_idx: int):
         pred = self.model(batch.z, batch.pos, batch.batch)
         loss = self.loss_fn(pred.view(-1), batch.y[:, self.target])
         self.log("train_loss", loss, prog_bar=True, on_step=False, on_epoch=True)
         return loss
 
-    def validation_step(self, batch: Batch, batch_idx: int):
+    def validation_step(self, batch, batch_idx: int):
         pred = self.model(batch.z, batch.pos, batch.batch)
         loss = self.loss_fn(pred.view(-1), batch.y[:, self.target])
         self.log("val_loss", loss, prog_bar=True, on_step=False, on_epoch=True)
 
-    def test_step(self, batch: Batch, batch_idx: int):
+    def test_step(self, batch, batch_idx: int):
         pred = self.model(batch.z, batch.pos, batch.batch)
         loss = self.loss_fn(pred.view(-1), batch.y[:, self.target])
         self.log("test_loss", loss, prog_bar=True, on_step=False, on_epoch=True)
@@ -152,18 +151,18 @@ class LitNNConv(LightningModule):
         out = self.lin2(out)
         return out.view(-1)
 
-    def training_step(self, batch: Batch, batch_idx: int):
+    def training_step(self, batch, batch_idx: int):
         y_hat = self(batch)
         loss = F.mse_loss(y_hat, batch.y)
         self.log("train_loss", loss, prog_bar=True, on_step=False, on_epoch=True)
         return loss
 
-    def validation_step(self, batch: Batch, batch_idx: int):
+    def validation_step(self, batch, batch_idx: int):
         y_hat = self(batch)
         loss = F.mse_loss(y_hat, batch.y)
         self.log("val_loss", loss, prog_bar=True, on_step=False, on_epoch=True)
 
-    def test_step(self, batch: Batch, batch_idx: int):
+    def test_step(self, batch, batch_idx: int):
         y_hat = self(batch)
         loss = F.mse_loss(y_hat, batch.y)
         self.log("test_loss", loss, prog_bar=True, on_step=False, on_epoch=True)
