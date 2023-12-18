@@ -11,8 +11,8 @@ from torch_geometric.datasets import QM9
 from torch_geometric.nn import DimeNet
 from torchmetrics.functional import accuracy as Accuracy
 
-from .lit_data.data import LitQM9
-from .lit_models.models import LitDimeNet
+from lit_data.data import LitQM9
+from lit_models.models import LitDimeNet
 
 
 def format_args(config):
