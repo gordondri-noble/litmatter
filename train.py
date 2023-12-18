@@ -53,7 +53,8 @@ def train_from_config(config):
         max_epochs=num_train_epochs,
         callbacks=[checkpoint_callback],
         auto_scale_batch_size='binsearch',
-        logger=wandb_logger)
+        logger=wandb_logger,
+        deterministic=True,)
 
     trainer.fit(model, datamodule=datamodule)
     trainer.test()
