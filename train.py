@@ -50,7 +50,6 @@ def train_from_config(config):
         accelerator='cuda',
         max_epochs=num_train_epochs,
         callbacks=[checkpoint_callback],
-        auto_scale_batch_size='binsearch',
         logger=wandb_logger,
         deterministic=True,)
 
