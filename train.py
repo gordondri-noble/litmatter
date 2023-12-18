@@ -27,8 +27,6 @@ def format_args(config):
 
 
 def train_from_config(config):
-    task = config.task
-    batch_size = config.batch_size
     num_train_epochs = config.num_epochs
     num_nodes = config.num_nodes
 
