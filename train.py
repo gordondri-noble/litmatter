@@ -7,9 +7,9 @@ from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
                                seed_everything)
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
-from pytorch_lightning.metrics import Accuracy
 from torch_geometric.datasets import QM9
 from torch_geometric.nn import DimeNet
+from torchmetrics.functional import accuracy as Accuracy
 
 from .lit_data.data import LitQM9
 from .lit_models.models import LitDimeNet
@@ -52,6 +52,7 @@ def train_from_config(config):
         accelerator='cuda',
         max_epochs=num_train_epochs,
         callbacks=[checkpoint_callback],
+        auto_scale_batch_size='binsearch',
         logger=wandb_logger)
 
     trainer.fit(model, datamodule=datamodule)
