@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 
+import dotenv
 import numpy as np
 from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
                                seed_everything)
@@ -13,6 +14,18 @@ from torchmetrics.functional import accuracy as Accuracy
 
 from lit_data.data import LitQM9
 from lit_models.models import LitDimeNet
+
+dotenv.load_dotenv()
+
+WANDB_BASE_URL = "https://nobleai.wandb.io"
+WANDB_API_KEY = os.environ['WANDB_API_KEY']
+
+wandb.login(relogin=True,
+            host=WANDB_BASE_URL,
+            key=WANDB_API_KEY)
+wandb.init(
+    entity="mle-noble-internal",
+    project="chemgpt")
 
 
 def format_args(config):
