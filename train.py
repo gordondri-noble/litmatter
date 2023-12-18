@@ -46,9 +46,10 @@ def train_from_config(config):
     wandb_logger = WandbLogger(log_model="all")
 
     trainer = Trainer(
-        gpus=-1,  # number of GPUs per node
+        devices=-1,  # number of devices per node - called devices instead of GPUS
         num_nodes=num_nodes,
-        accelerator='ddp',
+        strategy='ddp', # ddp is a strategy now, not an accelerator 
+        accelerator='cuda',
         max_epochs=num_train_epochs,
         callbacks=[checkpoint_callback],
         logger=wandb_logger)
