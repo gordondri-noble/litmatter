@@ -1,45 +1,35 @@
 import os.path as osp
-
-from typing import Optional, List, NamedTuple
+from typing import List, NamedTuple, Optional
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Sequential, Linear, ReLU, GRU, ModuleList, BatchNorm1d, MSELoss
-
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import (
-    LightningDataModule,
-    LightningModule,
-    Trainer,
-    seed_everything,
-)
-
 import torch_geometric.transforms as T
-from torch_geometric.datasets import QM9
-from torch_geometric.nn import NNConv, Set2Set
+from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
+                               seed_everything)
+from pytorch_lightning.callbacks import ModelCheckpoint
+from torch import Tensor
+from torch.nn import (GRU, BatchNorm1d, Linear, ModuleList, MSELoss, ReLU,
+                      Sequential)
 from torch_geometric.data import DataLoader
+from torch_geometric.datasets import QM9
+from torch_geometric.nn import DimeNet, NNConv, SchNet, Set2Set
 from torch_geometric.utils import remove_self_loops
-
-from torch_geometric.nn import DimeNet, SchNet
-
 
 target = 0
 dim = 64
 
-
 class LitDimeNet(LightningModule):
-    def __init__(self, target=0):
+    def __init__(self, target=0, hidden_channels=128, out_channels=1, num_blocks=6, num_bilinear=8, num_spherical=7, num_radial=6, cutoff=5.0):
         """Define PyTorch model."""
         super().__init__()
         model = DimeNet(
-            hidden_channels=128,
-            out_channels=1,
-            num_blocks=6,
-            num_bilinear=8,
-            num_spherical=7,
-            num_radial=6,
-            cutoff=5.0,
+            hidden_channels=hidden_channels,
+            out_channels=out_channels,
+            num_blocks=num_blocks,
+            num_bilinear=num_bilinear,
+            num_spherical=num_spherical,
+            num_radial=num_radial,
+            cutoff=cutoff,
         )
         self.model = model
         self.save_hyperparameters()
