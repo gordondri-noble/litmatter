@@ -139,7 +139,7 @@ class LitHF(LightningModule):
 
         if self.trainer.use_ddp:
             avg_perplexity_all = self.sync_across_gpus(perplexities).mean()
-        print("average perplexity (all)", avg_perplexity_all)
+            print("average perplexity (all)", avg_perplexity_all)
 
         return metrics
 

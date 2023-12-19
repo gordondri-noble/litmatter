@@ -1,30 +1,18 @@
-from pytorch_lightning import LightningDataModule
-
-from torch.utils.data import DataLoader
-
 import datasets
 import transformers
-from datasets import load_dataset, Dataset, DatasetDict, load_metric, load_from_disk
-from tokenizers import (
-    decoders,
-    models,
-    normalizers,
-    pre_tokenizers,
-    processors,
-    trainers,
-    Tokenizer,
-    Regex,
-)
-from transformers import BertTokenizerFast, PreTrainedTokenizerFast
-from transformers import (
-    AdamW,
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    get_linear_schedule_with_warmup,
-    get_constant_schedule_with_warmup,
-    set_seed,
-    DataCollatorForLanguageModeling,
-)
+from datasets import (Dataset, DatasetDict, load_dataset, load_from_disk,
+                      load_metric)
+from pytorch_lightning import LightningDataModule
+from torch.utils.data import DataLoader
+from transformers import (AdamW, AutoModelForSequenceClassification,
+                          AutoTokenizer, BertTokenizerFast,
+                          DataCollatorForLanguageModeling,
+                          PreTrainedTokenizerFast,
+                          get_constant_schedule_with_warmup,
+                          get_linear_schedule_with_warmup, set_seed)
+
+from tokenizers import (Regex, Tokenizer, decoders, models, normalizers,
+                        pre_tokenizers, processors, trainers)
 
 SEED = 42
 
@@ -87,7 +75,7 @@ class PubChemDataModule(LightningDataModule):
         self.debug = debug
         self.tokenizer_dir = tokenizer_dir
         
-        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir+'pubchem10M_tokenizer/')
+        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir)
         self.new_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     
         self.collate_fn = DataCollatorForLanguageModeling(tokenizer=self.new_tokenizer, mlm=False)
