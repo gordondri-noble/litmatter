@@ -75,7 +75,9 @@ class PubChemDataModule(LightningDataModule):
         self.debug = debug
         self.tokenizer_dir = tokenizer_dir
         
-        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir)
+        # self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir)
+        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir+'pubchem10M_tokenizer/')
+
         self.new_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     
         self.collate_fn = DataCollatorForLanguageModeling(tokenizer=self.new_tokenizer, mlm=False)
