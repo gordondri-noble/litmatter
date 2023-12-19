@@ -76,7 +76,7 @@ class PubChemDataModule(LightningDataModule):
         self.tokenizer_dir = tokenizer_dir
         
         # self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir)
-        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir+'pubchem10M_tokenizer/')
+        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir+'pubchem-10m/')
 
         self.new_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     
@@ -93,8 +93,9 @@ class PubChemDataModule(LightningDataModule):
             reduced_train = self.lm_datasets['train'].shuffle(seed=SEED).select(range(num_rows))
             self.lm_datasets['train'] = reduced_train
 
-        self.train_set = self.lm_datasets["train"]
-        self.val_set = self.lm_datasets["validation"]
+        self.train_set = self.lm_datasets["train"].remove_columns(["smiles"])
+        self.val_set = self.lm_datasets["validation"].remove_columns(["smiles"])
+        
         
     def train_dataloader(self):
         return DataLoader(self.train_set, shuffle=True, pin_memory=True, collate_fn=self.collate_fn, batch_size=self.batch_size, num_workers=self.num_workers)
