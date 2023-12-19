@@ -50,3 +50,9 @@ pandas==2.1.4
 deepchem==2.7.1 
 scikit-learn==1.3.2
 wandb==0.16.1
+
+
+# for chemGPT specifically 
+sentencepiece
+transformers
+datasets

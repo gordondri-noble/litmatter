@@ -99,7 +99,7 @@ class LitHF(LightningModule):
 
         return {"val_loss": loss, "metrics": metrics}
 
-    def validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self, outputs):
         avg_loss = torch.stack([x["val_loss"] for x in outputs]).mean()
         self.val_loss = avg_loss.item()
         if self.global_rank == 0:
