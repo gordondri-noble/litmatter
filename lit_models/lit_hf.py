@@ -1,51 +1,30 @@
-import os.path as osp
-
-from typing import Optional, List, NamedTuple
-
 import math
-
-import torch
-from torch import Tensor
-import torch.nn.functional as F
-from torch.utils.data import DataLoader
-from torch.nn import Sequential, Linear, ReLU, GRU, ModuleList, BatchNorm1d, MSELoss
-
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import (
-    LightningDataModule,
-    LightningModule,
-    Trainer,
-    seed_everything,
-)
+import os.path as osp
+from typing import List, NamedTuple, Optional
 
 import datasets
+import torch
+import torch.nn.functional as F
 import transformers
-from datasets import load_dataset, Dataset, DatasetDict, load_metric, load_from_disk
-from tokenizers import (
-    decoders,
-    models,
-    normalizers,
-    pre_tokenizers,
-    processors,
-    trainers,
-    Tokenizer,
-    Regex,
-)
-from transformers import BertTokenizerFast, PreTrainedTokenizerFast
-from datasets import load_dataset
-from transformers import AutoConfig, AutoModelForCausalLM
-from transformers import TrainingArguments
-from transformers import (
-    AdamW,
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    get_linear_schedule_with_warmup,
-    get_constant_schedule_with_warmup,
-    set_seed,
-    DataCollatorForLanguageModeling,
-)
+from datasets import (Dataset, DatasetDict, load_dataset, load_from_disk,
+                      load_metric)
+from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
+                               seed_everything)
+from pytorch_lightning.callbacks import ModelCheckpoint
+from torch import Tensor
+from torch.nn import (GRU, BatchNorm1d, Linear, ModuleList, MSELoss, ReLU,
+                      Sequential)
+from torch.utils.data import DataLoader
+from transformers import (AdamW, AutoConfig, AutoModelForCausalLM,
+                          AutoModelForSequenceClassification, AutoTokenizer,
+                          BertTokenizerFast, DataCollatorForLanguageModeling,
+                          GPTNeoConfig, GPTNeoForCausalLM,
+                          PreTrainedTokenizerFast, TrainingArguments,
+                          get_constant_schedule_with_warmup,
+                          get_linear_schedule_with_warmup, set_seed)
 
-from transformers import GPTNeoForCausalLM, GPTNeoConfig
+from tokenizers import (Regex, Tokenizer, decoders, models, normalizers,
+                        pre_tokenizers, processors, trainers)
 
 
 class LitHF(LightningModule):
@@ -105,7 +84,7 @@ class LitHF(LightningModule):
 
         return {"loss": loss, "progress_bar": {"loss": loss}, "metrics": metrics}
 
-    def training_epoch_end(self, outputs):
+    def on_train_epoch_end(self, outputs):
         avg_loss = torch.stack([x["loss"] for x in outputs]).mean()
         avg_perplexity = math.exp(avg_loss)
         metrics = {"loss": avg_loss, "perplexity": avg_perplexity}

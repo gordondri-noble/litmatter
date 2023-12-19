@@ -1,63 +1,49 @@
-import torch
-import torch.nn.functional as F
-from datasets import load_dataset
+import argparse
+import copy
 import logging
 import math
-
+import os
+import random
+import re
+import socket
 import sys
-import argparse
+from time import time
 
+import datasets
+import matplotlib.pyplot as plt
 import numpy as np
-import torch.nn as nn
-import torch.distributed as dist
-from torch.utils.data import DataLoader, TensorDataset
-from torch.autograd import Variable
-from sklearn.model_selection import train_test_split
-
+import pandas as pd
 import pytorch_lightning as pl
-from pytorch_lightning import LightningModule, LightningDataModule, seed_everything
+import seaborn as sns
+import selfies as sf
+import torch
+import torch.distributed as dist
+import torch.nn as nn
+import torch.nn.functional as F
+import transformers
+from datasets import (Dataset, DatasetDict, load_dataset, load_from_disk,
+                      load_metric)
+from pytorch_lightning import (LightningDataModule, LightningModule,
+                               seed_everything)
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.plugins import DeepSpeedPlugin
-
-import numpy as np
-import pandas as pd 
-
-import copy
-import os
-import socket
-import random
-from time import time
-import re
-
-import selfies as sf
-
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from torch.autograd import Variable
+from torch.utils.data import DataLoader, TensorDataset
+from transformers import (AdamW, AutoConfig, AutoModelForCausalLM,
+                          AutoModelForSequenceClassification, AutoTokenizer,
+                          BertTokenizerFast, DataCollatorForLanguageModeling,
+                          GPTNeoConfig, GPTNeoForCausalLM,
+                          PreTrainedTokenizerFast, TrainingArguments,
+                          get_constant_schedule_with_warmup,
+                          get_linear_schedule_with_warmup, set_seed)
 
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-import datasets
-import transformers
-from datasets import load_dataset, Dataset, DatasetDict, load_metric, load_from_disk
-from tokenizers import decoders, models, normalizers, pre_tokenizers, processors, trainers, Tokenizer, Regex
-from transformers import BertTokenizerFast, PreTrainedTokenizerFast
-from datasets import load_dataset
-from transformers import AutoConfig, AutoModelForCausalLM
-from transformers import TrainingArguments
-from transformers import (
-    AdamW,
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    get_linear_schedule_with_warmup,
-    get_constant_schedule_with_warmup,
-    set_seed,
-    DataCollatorForLanguageModeling,
-)
-
-from transformers import GPTNeoForCausalLM, GPTNeoConfig
+from tokenizers import (Regex, Tokenizer, decoders, models, normalizers,
+                        pre_tokenizers, processors, trainers)
 
 
 class LitChemGPT(LightningModule):
@@ -118,7 +104,7 @@ class LitChemGPT(LightningModule):
         
         return {'loss': loss,'progress_bar': {'loss': loss}, 'metrics': metrics}
 
-    def training_epoch_end(self, outputs):
+    def on_train_epoch_end(self, outputs):
         avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
         avg_perplexity = math.exp(avg_loss)
         metrics = {"loss": avg_loss, "perplexity": avg_perplexity}

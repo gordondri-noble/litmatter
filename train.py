@@ -68,7 +68,6 @@ def train_from_config(config):
         deterministic=True,)
 
     trainer.fit(model, datamodule=datamodule)
-    trainer.test()
 
 
 if __name__ == "__main__":
