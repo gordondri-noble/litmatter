@@ -76,14 +76,14 @@ class PubChemDataModule(LightningDataModule):
         self.tokenizer_dir = tokenizer_dir
         
         # self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir)
-        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir+'pubchem-10m/')
+        self.new_tokenizer = PreTrainedTokenizerFast.from_pretrained(self.tokenizer_dir)
 
         self.new_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     
         self.collate_fn = DataCollatorForLanguageModeling(tokenizer=self.new_tokenizer, mlm=False)
 
     def prepare_data(self):
-        self.lm_datasets = load_from_disk(self.data_dir + 'pubchem10M_lmdataset')    
+        self.lm_datasets = load_from_disk(self.data_dir)    
     
     def setup(self, stage=None):
         # set training set size

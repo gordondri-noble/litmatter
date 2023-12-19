@@ -68,7 +68,7 @@ class LitChemGPT(LightningModule):
         logs_dir = self.logs_dir
         num_proc = 16
 
-        new_tokenizer = PreTrainedTokenizerFast.from_pretrained(tokenizer_dir+'pubchem10M_tokenizer/')
+        new_tokenizer = PreTrainedTokenizerFast.from_pretrained(tokenizer_dir)
         new_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     
         # Instantiate the model
