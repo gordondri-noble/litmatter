@@ -28,7 +28,7 @@ from pytorch_lightning import (LightningDataModule, LightningModule,
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import CSVLogger
-from pytorch_lightning.plugins import DeepSpeedPlugin
+from pytorch_lightning.strategies import DDPStrategy
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
@@ -160,7 +160,7 @@ class LitChemGPT(LightningModule):
 
         if self.trainer.use_ddp:
             avg_perplexity_all = self.sync_across_gpus(perplexities).mean()
-        print('average perplexity (all)', avg_perplexity_all)
+            print('average perplexity (all)', avg_perplexity_all)
 
         return metrics
 
