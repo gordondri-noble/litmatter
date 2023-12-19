@@ -89,7 +89,7 @@ class PubChemDataModule(LightningDataModule):
             train_size = int(10**self.dataset_size)
             num_rows = int(train_size // self.batch_size)
             reduced_train = self.lm_datasets['train'].shuffle(seed=SEED).select(range(num_rows))
-            self.lm_datasets['train'2] = reduced_train
+            self.lm_datasets['train'] = reduced_train
 
         self.train_set = self.lm_datasets["train"]
         self.val_set = self.lm_datasets["validation"]
