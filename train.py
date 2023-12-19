@@ -4,6 +4,7 @@ import os
 
 import dotenv
 import numpy as np
+import wandb
 from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
                                seed_everything)
 from pytorch_lightning.callbacks import ModelCheckpoint
